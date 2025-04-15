@@ -36,7 +36,7 @@ class HeatAlertEnv(Env):
         min_start: int = 7,
         top_k_fips: int | None = None,
         effectiveness_type: Literal["data", "synthetic"] = "data",
-        reward_type: Literal["hospitalizations", "saved"] = "saved",
+        reward_type: Literal["hospitalizations", "saved"] = "hospitalizations",
         penalty: float = 1.0,
         min_temperature_threshold: float = 0.0,
     ):
@@ -282,10 +282,11 @@ class HeatAlertEnv(Env):
 
         # reward is - normalized at the per 100 per day level
         if self.reward_type == "hospitalizations":
-            reward = float(-1000 * baseline * (1 - effectiveness * action))
+            #reward = float(-1000 * baseline * (1 - effectiveness * action))
+            reward = float(-1 * baseline * (1 - effectiveness * action))
         elif self.reward_type == "saved":
-            reward = float(1000 * baseline * effectiveness * action)
-
+            #reward = float(1000 * baseline * effectiveness * action)
+            reward = float(1 * baseline * effectiveness * action)
         return reward
 
     def _get_info(self) -> dict:
@@ -335,7 +336,6 @@ class HeatAlertEnv(Env):
         # penalize if action is taken and at budget
         if action == 1 and (self.at_budget or below_thresh):
             reward -= self.penalty
-
         return self.observation.values, reward, done, False, self._get_info()
 
 
