@@ -18,6 +18,7 @@ class HeatAlertEnv(Env):
 
     def __init__(
         self,
+        location: str | None = None,
         weights: str = "nn_full_medicare_all",
         years: list | None = None,
         fips_list: list | None = None,
@@ -41,6 +42,7 @@ class HeatAlertEnv(Env):
     ):
         """Initialize the environment."""
         super().__init__()
+        self.location = location
         self.valid_years = years
         self.similar_climate_counties = similar_climate_counties
         self.budget = budget
@@ -174,7 +176,7 @@ class HeatAlertEnv(Env):
         if options is None:
             options = {}
 
-        location = options.get("locations", None)
+        location = options.get("locations", self.location)
         similar_climate_counties = options.get(
             "similar_climate_counties", self.similar_climate_counties
         )
