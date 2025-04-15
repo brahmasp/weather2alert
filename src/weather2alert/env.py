@@ -294,6 +294,7 @@ class HeatAlertEnv(Env):
             "feature_names": self.feat_names,
             "location": self.location,
             "location_index": self.location_index,
+            "episode_info": self.ep
         }
 
     def step(self, action: int):
