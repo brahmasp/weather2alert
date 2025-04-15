@@ -31,9 +31,14 @@ pip install git+https://github.com/NSAPH-Projects/weather2alert
 To create an environment, use the following code:
 
 ```python
-import weather2alert
-env = weather2alert.env.HeatAlertEnv(seed=1234)
-obs, info = env.reset(location='06037', similar_climate_counties=False)
+from weather2alert.env import HeatAlertEnv
+
+env = HeatAlertEnv()
+options = {
+    'locations': '06037',
+    'similar_climate_counties': False,
+}
+obs, info = env.reset(seed=1234,options=options)
 ```
 
 The `location` parameter is a string that represents the FIPS code of the county where the environment is located. The default value is `'06037'`, which corresponds to Los Angeles County, California. When the `location` is not provided, it will be chosen randomly from the available locations. The keyword argument `similar_climate_counties` is a boolean that determines whether the environment will use climate data from similar counties to the reference to augment the available episodes. The default value is `False`. See the paper for details on the data augmentation process for climate transitions.
@@ -45,7 +50,7 @@ Use the environment with the standard Gymnasium API. For example:
 done = False
 while not done:
     action = env.action_space.sample()
-    obs, reward, done, info = env.step(action)
+    obs, reward, done, _, info = env.step(action)
 ```
 
 The available actions are always `0` (do not send an alert) and `1` (send an alert). 

@@ -10,6 +10,8 @@ from scipy.special import expit as sigmoid
 
 from .datautils import get_similar_counties
 
+import pdb
+
 
 class HeatAlertEnv(Env):
     """Class to simulate the environment for the online RL agent."""
@@ -215,7 +217,7 @@ class HeatAlertEnv(Env):
                 budget = self.np_random.integers(0, b + 1)
             elif sample_budget_type == "centered":
                 budget = self.np_random.integers(0.5 * b, 1.5 * b + 1)
-        self.remaining_budget = budget
+        self.budget = self.remaining_budget = budget
 
         self.at_budget = False
         self.observation = self._get_obs()
