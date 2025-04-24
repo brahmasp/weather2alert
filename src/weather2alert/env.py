@@ -327,8 +327,8 @@ class HeatAlertEnv(Env):
 
         # advance state
         done = self.t >= self.n_days - 1
+        self.observation = self._get_obs()
         if not done:
-            self.observation = self._get_obs()
             self.t += 1
             self._step_counter += 1
             self.alert_streak = self.alert_streak + 1 if actual_action else 0
