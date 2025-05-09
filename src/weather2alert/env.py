@@ -121,7 +121,8 @@ class HeatAlertEnv(Env):
         self.n_samples = posterior_samples["baseline_bias"].shape[0]
 
         # setup obs space
-        self.obs_dim = len(merged.columns) - 3  # don't include date
+        #self.obs_dim = len(merged.columns) - 3  # don't include date
+        self.obs_dim = len(merged.columns) - 3 + 1 # includes date
         self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
@@ -238,6 +239,7 @@ class HeatAlertEnv(Env):
         row["alert_2wks"] = sum(self.actual_alert_buffer[-14:])
         row["alert_streak"] = self.alert_streak
         row["remaining_budget"] = self.budget - sum(self.actual_alert_buffer)
+        row["year"] = int(self.ep_index[-4:]) - min(self.valid_years)
 
         return row
 
@@ -265,7 +267,8 @@ class HeatAlertEnv(Env):
                     x = row[k.replace("effectiveness_", "")]
                     v = v[self.coef_index, 0, li].item()
                     effectiveness_contribs.append(x * v)
-                    effectiveness = sigmoid(sum(effectiveness_contribs))
+                effectiveness = sigmoid(sum(effectiveness_contribs))
+                #effectiveness = sum(effectiveness_contribs)
             else:
                 # subtract for alert streak and last alerts
                 effectiveness = (
@@ -284,6 +287,7 @@ class HeatAlertEnv(Env):
         if self.reward_type == "hospitalizations":
             #reward = float(-1000 * baseline * (1 - effectiveness * action))
             reward = float(-1 * baseline * (1 - effectiveness * action))
+            #reward = float(baseline * effectiveness * action)
         elif self.reward_type == "saved":
             #reward = float(1000 * baseline * effectiveness * action)
             reward = float(1 * baseline * effectiveness * action)
